@@ -1,0 +1,35 @@
+$(function() {
+    function skontrolovatStitokNovinka() {
+        // Prechádzame všetky produktové karty
+        $('.p-card, .product').each(function() {
+            var $polozka = $(this);
+            
+            // Pokus o získanie dátumu z HTML atribútu
+            var datumVytvoreniaStr = $polozka.attr('data-date-created'); 
+            
+            if (datumVytvoreniaStr) {
+                var datumVytvorenia = new Date(datumVytvoreniaStr);
+                var dnes = new Date();
+                
+                // Výpočet rozdielu v dňoch
+                var rozdielCasu = Math.abs(dnes - datumVytvorenia);
+                var rozdielDni = Math.ceil(rozdielCasu / (1000 * 60 * 60 * 24));
+
+                // Ak je produkt mladší ako 30 dní, pridáme zelený štítok
+                if (rozdielDni <= 30 && $polozka.find('.custom-badge-new').length === 0) {
+                    var $obrazok = $polozka.find('img').first();
+                    if ($obrazok.length) {
+                        $obrazok.before('<div class="custom-badge-new" style="position:absolute; top:5px; left:5px; background:#28a745; color:#fff; padding:3px 8px; z-index:99; border-radius:3px; font-weight:bold;">Novinka</div>');
+                    }
+                }
+            }
+        });
+    }
+
+    // Spustenie funkcie pri načítaní
+    skontrolovatStitokNovinka();
+    // Podpora pre dynamické načítanie produktov (filtre, stránkovanie)
+    $(document).on('ShoptetDOMPageContentLoaded ShoptetDOMPageMoreProductsLoaded', skontrolovatStitokNovinka);
+});Loaded', checkNovinkaBadge);
+});
+</script>
