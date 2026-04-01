@@ -1,26 +1,57 @@
 <style>
-    /* Skrytie tlačidla košíka */
-    .p-card .add-to-cart-button, .p-card .btn-cart { opacity: 0 !important; visibility: hidden !important; transition: 0.3s; }
-    .p-card:hover .add-to-cart-button, .p-card:hover .btn-cart { opacity: 1 !important; visibility: visible !important; }
-    
-    /* Doprava zadarmo */
-    .free-shipping-note { display: block !important; color: #d9534f !important; font-weight: bold; font-size: 11px; }
+  /* Štýl pre text o doprave */
+  .free-shipping-note {
+      display: block !important;
+      color: #d9534f !important; /* Nastavené na výraznejšiu farbu, je možné zmeniť na #555 */
+      font-size: 11px !important;
+      margin-top: 4px !important;
+      font-weight: bold !important;
+      line-height: 1.2 !important;
+  }
 </style>
 
 <script>
 $(function() {
-    function checkShipping() {
-        $('.p-card').each(function() {
-            var priceText = $(this).find('.price-final').text();
-            if (priceText && $(this).find('.free-shipping-note').length === 0) {
-                var price = parseFloat(priceText.replace(/[^\d,.-]/g, '').replace(',', '.'));
-                if (price < 450) {
-                    $(this).find('.price-wrapper').last().append('<div class="free-shipping-note">🚚 Doprava zadarmo nad 450 €</div>');
+    function skontrolovatCenuDopravy() {
+        // Prechádzame všetky karty produktov
+        $('.p-card, .product, .product-item').each(function() {
+            var $polozka = $(this);
+            
+            // Kontrola, aby sa text nepridal duplicitne
+            if ($polozka.find('.free-shipping-note').length > 0) return;
+
+            // 1. Hľadáme text ceny (finálna cena s DPH)
+            var textCeny = $polozka.find('.price-final, .price, .p-price, .price-standard').first().text();
+            
+            if (textCeny) {
+                // 2. Očistíme cenu: odstránime všetko okrem číslic, bodiek a čiarok
+                // Následne zmeníme čiarku na bodku, aby JS mohol počítať
+                var cistaCena = textCeny.replace(/[^\d,.-]/g, '').replace(',', '.');
+                var hodnotaCeny = parseFloat(cistaCena);
+
+                // 3. Podmienka: ak je cena nižšia ako 450 €
+                if (!isNaN(hodnotaCeny) && hodnotaCeny < 450) {
+                    var textDopravy = '<div class="free-shipping-note">🚚 Doprava zadarmo nad 450 €</div>';
+                    
+                    // Vložíme po bloku s cenou alebo na koniec popisu
+                    var $ciel = $polozka.find('.p-bottom, .price-wrapper, .p-in-footer').last();
+                    if ($ciel.length) {
+                        $ciel.append(textDopravy);
+                    } else {
+                        $polozka.append(textDopravy);
+                    }
                 }
             }
         });
     }
-    checkShipping();
-    $(document).on('ShoptetDOMPageContentLoaded ShoptetDOMPageMoreProductsLoaded', checkShipping);
+
+    // Spustenie pri načítaní
+    skontrolovatCenuDopravy();
+    
+    // Podpora pre dynamické načítanie produktov (stránkovanie/filtre)
+    $(document).on('ShoptetDOMPageContentLoaded ShoptetDOMPageMoreProductsLoaded', skontrolovatCenuDopravy);
+    
+    // Rezervný časovač pre vlastné šablóny
+    setInterval(skontrolovatCenuDopravy, 3000);
 });
 </script>
