@@ -1,0 +1,25 @@
+<style>
+    /* 1. Skrytie tlačidla košíka a jeho kontajnera */
+    .p-card .add-to-cart-button, 
+    .product .add-to-cart-button,
+    .p-card .btn-cart,
+    .p-card .p-tools {
+        opacity: 0 !important;
+        visibility: hidden !important;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out !important;
+    }
+    
+    /* 2. Zobrazenie tlačidla iba pri prejdení myšou (hover) nad kartou produktu */
+    .p-card:hover .add-to-cart-button, 
+    .product:hover .add-to-cart-button,
+    .p-card:hover .btn-cart,
+    .p-card:hover .p-tools {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    /* Zabezpečenie správneho pozicionovania */
+    .p-card, .product {
+        position: relative !important;
+    }
+</style>
