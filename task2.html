@@ -1,0 +1,26 @@
+<style>
+    /* Skrytie tlačidla košíka */
+    .p-card .add-to-cart-button, .p-card .btn-cart { opacity: 0 !important; visibility: hidden !important; transition: 0.3s; }
+    .p-card:hover .add-to-cart-button, .p-card:hover .btn-cart { opacity: 1 !important; visibility: visible !important; }
+    
+    /* Doprava zadarmo */
+    .free-shipping-note { display: block !important; color: #d9534f !important; font-weight: bold; font-size: 11px; }
+</style>
+
+<script>
+$(function() {
+    function checkShipping() {
+        $('.p-card').each(function() {
+            var priceText = $(this).find('.price-final').text();
+            if (priceText && $(this).find('.free-shipping-note').length === 0) {
+                var price = parseFloat(priceText.replace(/[^\d,.-]/g, '').replace(',', '.'));
+                if (price < 450) {
+                    $(this).find('.price-wrapper').last().append('<div class="free-shipping-note">🚚 Doprava zadarmo nad 450 €</div>');
+                }
+            }
+        });
+    }
+    checkShipping();
+    $(document).on('ShoptetDOMPageContentLoaded ShoptetDOMPageMoreProductsLoaded', checkShipping);
+});
+</script>
